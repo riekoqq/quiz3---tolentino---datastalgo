@@ -5,16 +5,14 @@ import Product from '../components/Card';
 import axios from 'axios'
 
 function Dashboard() {
-  const { id } = useParams()
-
   const [products, setProducts] = useState([])
 
   useEffect(() => {
-    async function fetchProduct() {
+    async function fetchProducts() {
       const {data} = await axios.get(`/api/products`)
       setProducts(data)
     }
-    fetchProduct()
+    fetchProducts()
   }, []) 
   return (
     <div>
