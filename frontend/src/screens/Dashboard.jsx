@@ -1,36 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useParams} from 'react-router-dom';
-import { Col, Row, Button } from 'react-bootstrap'; // Added Button for styling
+import React, { useEffect } from 'react';
+import { Col, Row, Container } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import Product from '../components/Card';
-import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux';
+import { listProducts } from '../actions/productActions';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
 
 function Dashboard() {
-  const [products, setProducts] = useState([])
+  const dispatch = useDispatch();
+  const productList = useSelector((state) => state.productList);
+  const { error, loading, products } = productList;
 
   useEffect(() => {
-    async function fetchProducts() {
-      const {data} = await axios.get(`/api/products`)
-      setProducts(data)
-    }
-    fetchProducts()
-  }, []) 
-  return (
-    <div>
-      <h1>Products</h1>
-      <Row>
-        {products.map(product => (
-          <Col key={product.id} sm={12} md={6} lg={4} xl={3}>
-            <Product product={product} />
-          </Col>
-        ))}
-      </Row>
+    dispatch(listProducts());
+  }, [dispatch]);
 
-      <div className="mt-4">
-        <Link to="/users">
-          <Button variant="primary">Go to User Management</Button>
-        </Link>
-      </div>
-    </div>
+  return (
+    <Container className="my-4">
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant="danger">{error}</Message>
+      ) : (
+        <>
+          <Row>
+            {products.map((product) => (
+              <Col key={product.id} sm={12} md={6} lg={4} xl={3}>
+                <Product product={product} />
+              </Col>
+            ))}
+          </Row>
+          <div className="mt-4">
+            <Link to="/users" className="btn btn-primary">
+              View Users
+            </Link>
+          </div>
+        </>
+      )}
+    </Container>
   );
 }
 

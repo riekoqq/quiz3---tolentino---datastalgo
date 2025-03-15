@@ -1,43 +1,65 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Col, Row, Image, ListGroup, Button, Card } from 'react-bootstrap'
-import products from '../products.js'
-import Product from '../components/Card.jsx'
+import { Col, Row, Image, ListGroup } from 'react-bootstrap'
 import Rating from '../components/Rating.jsx'
-import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { listProductDetails } from '../actions/productActions.jsx'
+import Loader from '../components/Loader.jsx'
+import Message from '../components/Message.jsx'
+
 function ProductScreen() {
   const { id } = useParams()
-
-  const [product, setProduct] = useState([])
+  const dispatch = useDispatch()
+  const productDetails = useSelector(state => state.productDetails)
+  const { loading, error, product } = productDetails
 
   useEffect(() => {
-    async function fetchProduct() {
-      const {data} = await axios.get(`/api/products/${id}`)
-      setProduct(data)
-    }
-    fetchProduct()
-  }, [])
+    dispatch(listProductDetails(id))
+  }, [dispatch, id])
 
   return (
-    <div>
-      <h1>{product.name}</h1>
-      <Row>
-        <Col md={6}>
-          <Image src={product.image} alt={product.name} fluid></Image>
-        </Col>
-        <Col md={3}>
-          <ListGroup variant="flush">
-            <ListGroup.Item>
-              <h3>{product.name}</h3>
-            </ListGroup.Item>
-            <ListGroup.Item>{product.description}</ListGroup.Item>
-            <ListGroup.Item>
-              <Rating value={product.rating} text={`${product.numReviews} reviews`} color={'#f8e825'} />
-            </ListGroup.Item>
-            <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
-          </ListGroup>
-        </Col>
-      </Row>
+    <div className="container my-4">
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant="danger">{error}</Message>
+      ) : (
+        <>
+          <Link to="/" className="btn btn-dark my-3">
+            &larr; Go Back
+          </Link>
+
+          <Row className="justify-content-center">
+            <Col md={6}>
+              <Image src={product.image} alt={product.name} fluid className="rounded shadow" />
+            </Col>
+            <Col md={4}>
+              <ListGroup variant="flush" className="shadow-sm p-3 rounded">
+                <ListGroup.Item>
+                  <h3 className="fw-bold">{product.name}</h3>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Rating value={product.rating} text={`${product.numReviews} reviews`} color={'#f8e825'} />
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <p className="text-muted">{product.description}</p>
+                </ListGroup.Item>
+                <ListGroup.Item className="fs-5">
+                  <strong>Price: </strong> <span className="text-success">${product.price}</span>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <strong>Status: </strong>
+                  {product.stock > 0 ? (
+                    <span className="text-success">{product.stock} In Stock</span>
+                  ) : (
+                    <span className="text-danger">Out of Stock</span>
+                  )}
+                </ListGroup.Item>
+              </ListGroup>
+            </Col>
+          </Row>
+        </>
+      )}
     </div>
   )
 }

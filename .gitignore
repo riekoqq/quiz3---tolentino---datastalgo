@@ -1,0 +1,64 @@
+# Ignore Python bytecode and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore environment and virtual environment
+.env
+.venv/
+env/
+venv/
+Pipfile
+Pipfile.lock
+
+# Ignore Django-specific files
+db.sqlite3
+/media/
+/staticfiles/
+*.log
+local_settings.py
+*.sqlite3
+/config/settings_local.py
+
+# Ignore secrets and sensitive data
+*.pem
+*.key
+*.crt
+/secrets.json
+
+# Ignore Django migrations (optional, but keep them tracked if needed)
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# Ignore React build files
+/node_modules/
+/build/
+/dist/
+/yarn.lock
+package-lock.json
+
+# Ignore React environment files
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Ignore editor & OS-specific files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Ignore coverage & testing files
+.coverage
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.pytest_cache/
+
+# Ignore Docker-related files
+docker-compose.override.yml
+*.dockerfile
